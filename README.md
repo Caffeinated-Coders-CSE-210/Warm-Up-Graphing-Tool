@@ -24,5 +24,10 @@ Scientific notation is accepted. Tick labels remain finite for very large values
 
 ## Numeric regression checks
 
-With Node.js installed, run `node --test tests/scale.test.cjs`.
+With Node.js 24 installed, run `node --test tests/*.test.cjs` from the repository root.
 No dependencies or build step are required to use the website.
+
+GitHub Actions runs the same command when pull requests are opened or updated and
+when commits are pushed to `main`. Open a pull request's **Checks** tab, or the
+repository's **Actions** tab and its **Node tests** workflow, to see results and
+failure details. Tests must pass before merging.
