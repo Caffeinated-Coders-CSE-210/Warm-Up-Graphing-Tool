@@ -81,3 +81,4 @@ failure details. Tests must pass before merging.
 ## Documentation
 
 - [Contributing Guidelines](docs/CONTRIBUTING.md) — contribution workflow, issue and branch conventions, commit messages, testing, pull requests, code review, and merging.
+- [Performance measurements](docs/manual-test-results/performance-measurements.md) — import, add, and PNG export timings for 100, 1,000, and 10,000 points, with reproduction steps and observed limitations.
