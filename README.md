@@ -55,8 +55,11 @@ are added. It does not verify file input, chart interactions, or downloads.
 Check those separately in the browser: import `sample.csv`, add a point,
 cancel and confirm deletion, toggle a scale, and export an image.
 
-## Files
+## Folders & Files
 
+- `.github/`: GitHub configuration and automated workflows.
+- `docs/`: Project documentation and manual test results.
+- `tests/`: Automated test files.
 - `index.html`: page controls and chart containers.
 - `style.css`: layout and chart appearance.
 - `scale.js`: numeric scaling and tick formatting.
