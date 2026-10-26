@@ -7,6 +7,47 @@ const { createAxis, formatTick } = vm.runInNewContext(
   fs.readFileSync(path.join(__dirname, "../scale.js"), "utf8") + "; ({ createAxis, formatTick });"
 );
 
+test("rounded labels never overflow to Infinity", () => {
+  for (const value of [Number.MAX_VALUE, -Number.MAX_VALUE, 1.797e308, Number.MIN_VALUE, 0]) {
+    assert.doesNotMatch(formatTick(value), /Infinity|NaN/);
+  }
+  assert.equal(formatTick(Number.MAX_VALUE), "1.8e+308");
+  assert.equal(formatTick(1.2), "1.2");
+  assert.equal(formatTick(100), "100");
+});
+
+test("linear axes handle extreme spans, subnormal values, and close values", () => {
+  for (const [min, max] of [
+    [-Number.MAX_VALUE, Number.MAX_VALUE],
+    [0, Number.MIN_VALUE],
+    [-Number.MIN_VALUE, Number.MIN_VALUE],
+    [Number.MIN_VALUE, 2 * Number.MIN_VALUE],
+    [1.7976931348623155e308, Number.MAX_VALUE],
+    [-10, -2]
+  ]) {
+    const axis = createAxis(min, max);
+    assert.equal(axis.position(min), 0);
+    assert.equal(axis.position(max), 1);
+    for (const ratio of axis.tickRatios) {
+      const value = axis.tick(ratio);
+      assert.ok(Number.isFinite(value));
+      assert.ok(Number.isFinite(axis.position(value)));
+      assert.ok(value >= min && value <= max);
+      assert.doesNotMatch(formatTick(value), /Infinity|NaN/);
+    }
+  }
+});
+
+test("constant axes center points, including zero and floating-point limits", () => {
+  for (const value of [0, Number.MIN_VALUE, Number.MAX_VALUE, -Number.MAX_VALUE]) {
+    const axis = createAxis(value, value);
+    assert.equal(axis.position(value), 0.5);
+    assert.equal(axis.tick(0.5), value);
+    assert.equal(axis.tickRatios.length, 1);
+    if (value > 0) assert.equal(createAxis(value, value, true).position(value), 0.5);
+  }
+});
+
 test("ordinary linear axes map values and ticks evenly, including negative ranges", () => {
   for (const [min, max, ticks] of [
     [0, 100, [0, 25, 50, 75, 100]],
@@ -52,47 +93,6 @@ test("narrow ranges keep distinct tick values", () => {
     const ticks = axis.tickRatios.map(axis.tick);
     assert.equal(new Set(ticks).size, ticks.length);
     assert.ok(Math.abs(axis.position(ticks[2]) - 0.5) < 1e-9);
-  }
-});
-
-test("rounded labels never overflow to Infinity", () => {
-  for (const value of [Number.MAX_VALUE, -Number.MAX_VALUE, 1.797e308, Number.MIN_VALUE, 0]) {
-    assert.doesNotMatch(formatTick(value), /Infinity|NaN/);
-  }
-  assert.equal(formatTick(Number.MAX_VALUE), "1.8e+308");
-  assert.equal(formatTick(1.2), "1.2");
-  assert.equal(formatTick(100), "100");
-});
-
-test("linear axes handle extreme spans, subnormal values, and close values", () => {
-  for (const [min, max] of [
-    [-Number.MAX_VALUE, Number.MAX_VALUE],
-    [0, Number.MIN_VALUE],
-    [-Number.MIN_VALUE, Number.MIN_VALUE],
-    [Number.MIN_VALUE, 2 * Number.MIN_VALUE],
-    [1.7976931348623155e308, Number.MAX_VALUE],
-    [-10, -2]
-  ]) {
-    const axis = createAxis(min, max);
-    assert.equal(axis.position(min), 0);
-    assert.equal(axis.position(max), 1);
-    for (const ratio of axis.tickRatios) {
-      const value = axis.tick(ratio);
-      assert.ok(Number.isFinite(value));
-      assert.ok(Number.isFinite(axis.position(value)));
-      assert.ok(value >= min && value <= max);
-      assert.doesNotMatch(formatTick(value), /Infinity|NaN/);
-    }
-  }
-});
-
-test("constant axes center points, including zero and floating-point limits", () => {
-  for (const value of [0, Number.MIN_VALUE, Number.MAX_VALUE, -Number.MAX_VALUE]) {
-    const axis = createAxis(value, value);
-    assert.equal(axis.position(value), 0.5);
-    assert.equal(axis.tick(0.5), value);
-    assert.equal(axis.tickRatios.length, 1);
-    if (value > 0) assert.equal(createAxis(value, value, true).position(value), 0.5);
   }
 });
 
