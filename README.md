@@ -72,3 +72,7 @@ GitHub Actions runs the same command when pull requests are opened or updated an
 when commits are pushed to `main`. Open a pull request's **Checks** tab, or the
 repository's **Actions** tab and its **Node tests** workflow, to see results and
 failure details. Tests must pass before merging.
+
+## Documentation
+
+- [Contributing Guidelines](docs/CONTRIBUTING.md) — contribution workflow, issue and branch conventions, commit messages, testing, pull requests, code review, and merging.
