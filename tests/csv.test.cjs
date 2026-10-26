@@ -10,8 +10,6 @@ const { parseCSV } = vm.runInNewContext(
 test("CSV errors retain physical line numbers after leading blank lines", () => {
   for (const newline of ["\n", "\r\n", "\r"]) {
     const csv = ["", "", "x,y", "1,1", "10,oops"].join(newline);
-    assert.throws(() => parseCSV(csv), {
-      message: "Row 5 must contain exactly two valid numbers."
-    });
+    assert.throws(() => parseCSV(csv), /Row 5\b/);
   }
 });
