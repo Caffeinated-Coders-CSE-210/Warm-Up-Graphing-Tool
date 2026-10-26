@@ -29,7 +29,8 @@ Scientific notation is accepted. Tick labels remain finite for very large values
 
 ```mermaid
 flowchart TD
-  CSV[CSV import] -->|parseCSV validates all rows, then replaces data| P[points]
+  CSV[CSV import] --> Parser["csv.js: parseCSV"]
+  Parser -->|return validated points| P[points]
   Add[Manual addition] -->|append a valid point| P
   Delete[Confirmed deletion] -->|remove the selected point| P
   P --> R[render]
@@ -44,7 +45,7 @@ flowchart TD
 ```
 
 Start in `app.js` for input handlers, the shared `points` array, `render()`,
-`drawChart()`, and export. Use `scale.js` for axis calculations and tick labels.
+`drawChart()`, and export. CSV parsing and validation are handled separately in `csv.js`, while `scale.js` provides axis calculations and tick labels.
 `render()` also resets unsupported log scales and updates the controls before
 drawing. An invalid CSV leaves the current data unchanged; canceling deletion
 does not change `points`.
@@ -63,6 +64,7 @@ cancel and confirm deletion, toggle a scale, and export an image.
 - `index.html`: page controls and chart containers.
 - `style.css`: layout and chart appearance.
 - `scale.js`: numeric scaling and tick formatting.
+- `csv.js`: CSV parsing and validation.
 - `app.js`: CSV input, chart interactions, and image export.
 - `sample.csv`: example dataset.
 
