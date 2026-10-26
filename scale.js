@@ -1,8 +1,54 @@
 // Keep labels as text: converting a rounded 1.80e+308 back to a number overflows.
-function formatTick(value) {
-  const [mantissa, exponent] = value.toPrecision(3).split("e");
-  const compact = mantissa.includes(".") ? mantissa.replace(/0+$/, "").replace(/\.$/, "") : mantissa;
-  return exponent === undefined ? compact : `${compact}e${exponent}`;
+function formatTick(value, precision = 3) {
+  let [mantissa, exponent] = value.toPrecision(precision).split("e");
+
+
+  if (mantissa.includes(".")) {
+    mantissa = mantissa.replace(/0+$/, "").replace(/\.$/, "");
+  }
+
+  if (exponent === undefined) {
+    return mantissa;
+  }
+
+  return `${mantissa}e${exponent}`;
+}
+
+// Label a whole axis at once so narrow ranges like 1000-1001 show their step.
+function formatTicks(values, logarithmic = false) {
+  const maxPrecision = 15;
+  let precision = 3;
+  if (!logarithmic) {
+    let step = Infinity;
+
+    for (let i = 1; i < values.length; i++) {
+      const gap = Math.abs(values[i] - values[i - 1]);
+      if (gap > 0 && gap < step) {
+        step = gap;
+      }
+    }
+    const largest = Math.max(...values.map(Math.abs));
+
+    if (Number.isFinite(step) && largest > 0) {
+      const largestDigits = Math.floor(Math.log10(largest));
+      const stepDigits = Math.floor(Math.log10(step));
+
+      // Two extra digits cover quarter steps such as x.25 and x.75.
+      const digits = largestDigits - stepDigits + 2;
+      precision = Math.max(3, Math.min(maxPrecision, digits));
+    }
+  }
+  // Log ticks are unevenly spaced, so add digits until distinct values read differently.
+  // Fallback incase ticks are duplicated due to rounding, e.g. 1e-7 and 1.0000001e-7.
+  // e.g. Log ticks
+  const distinctValues = new Set(values).size;
+  let labels = values.map((value) => formatTick(value, precision));
+
+  while (new Set(labels).size < distinctValues && precision < maxPrecision) {
+    precision++;
+    labels = values.map((value) => formatTick(value, precision));
+  }
+  return labels;
 }
 
 function interpolate(min, max, ratio) {

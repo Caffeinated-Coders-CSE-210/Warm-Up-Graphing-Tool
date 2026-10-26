@@ -189,14 +189,17 @@ function drawChart(svg, connectPoints) {
     const y = bottom - i / 4 * (bottom - top);
     svg.append(svgElement("line", { x1: left, y1: y, x2: right, y2: y, class: "grid" }));
   }
-  for (const ratio of xAxis.tickRatios) {
+  // Format each axis as a group so narrow ranges get enough digits to differ.
+  const xLabels = formatTicks(xAxis.tickRatios.map(xAxis.tick), logScale.x);
+  const yLabels = formatTicks(yAxis.tickRatios.map(yAxis.tick), logScale.y);
+  xAxis.tickRatios.forEach((ratio, i) => {
     const x = left + ratio * (right - left);
-    svg.append(svgElement("text", { x, y: bottom + 22, "text-anchor": "middle" }, formatTick(xAxis.tick(ratio))));
-  }
-  for (const ratio of yAxis.tickRatios) {
+    svg.append(svgElement("text", { x, y: bottom + 22, "text-anchor": "middle" }, xLabels[i]));
+  });
+  yAxis.tickRatios.forEach((ratio, i) => {
     const y = bottom - ratio * (bottom - top);
-    svg.append(svgElement("text", { x: left - 10, y: y + 4, "text-anchor": "end" }, formatTick(yAxis.tick(ratio))));
-  }
+    svg.append(svgElement("text", { x: left - 10, y: y + 4, "text-anchor": "end" }, yLabels[i]));
+  });
   svg.append(
     svgElement("path", { d: `M ${left} ${top} V ${bottom} H ${right}`, class: "axis" }),
     svgElement("text", { x: (left + right) / 2, y: 296, "text-anchor": "middle" }, logScale.x ? "X (log)" : "X"),
