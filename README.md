@@ -29,7 +29,8 @@ Scientific notation is accepted. Tick labels remain finite for very large values
 
 ```mermaid
 flowchart TD
-  CSV[CSV import] -->|parseCSV validates all rows, then replaces data| P[points]
+  CSV[CSV import] --> Parser["csv.js: parseCSV"]
+  Parser -->|return validated points| P[points]
   Add[Manual addition] -->|append a valid point| P
   Edit[Saved edit] -->|parsePointInput validates, editPoint updates the selected point| P
   Delete[Deletion from the point dialog] -->|remove the selected point| P
@@ -45,8 +46,8 @@ flowchart TD
 ```
 
 Start in `app.js` for input handlers, the shared `points` array, `render()`,
-`drawChart()`, and export. Use `scale.js` for axis calculations and tick labels, and `points.js`
-for validating and applying point edits.
+`drawChart()`, and export. CSV parsing and validation are handled separately in `csv.js`, while `scale.js` provides axis calculations and tick labels.
+`points.js` validates and applies point edits.
 `render()` also resets unsupported log scales and updates the controls before
 drawing. An invalid CSV leaves the current data unchanged; canceling the point
 dialog, or saving invalid values, does not change `points`.
@@ -58,12 +59,16 @@ are added. It does not verify file input, chart interactions, or downloads.
 Check those separately in the browser: import `sample.csv`, add a point,
 edit a point (including invalid input and Cancel), delete a point, toggle a scale, and export an image.
 
-## Files
+## Folders & Files
 
+- `.github/`: GitHub configuration and automated workflows.
+- `docs/`: Project documentation and manual test results.
+- `tests/`: Automated test files.
 - `index.html`: page controls and chart containers.
 - `style.css`: layout and chart appearance.
 - `scale.js`: numeric scaling and tick formatting.
 - `points.js`: point-edit validation and in-place updates.
+- `csv.js`: CSV parsing and validation.
 - `app.js`: CSV input, chart interactions, and image export.
 - `sample.csv`: example dataset.
 
