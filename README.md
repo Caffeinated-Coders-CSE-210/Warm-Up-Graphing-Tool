@@ -2,7 +2,7 @@
 
 A small, dependency-free CSV plotting website with linked line and scatter plots.
 Open `index.html` in a browser, or serve this folder with any static web server.
-
+Test
 ## Quick start
 
 1. Clone or download this repository and open its folder. No install or build step is needed.
