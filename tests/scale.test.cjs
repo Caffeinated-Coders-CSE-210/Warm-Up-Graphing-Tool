@@ -3,9 +3,15 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-const { createAxis, formatTick } = vm.runInNewContext(
-  fs.readFileSync(path.join(__dirname, "../scale.js"), "utf8") + "; ({ createAxis, formatTick });"
+const { createAxis, formatTick, formatTicks } = vm.runInNewContext(
+  fs.readFileSync(path.join(__dirname, "../scale.js"), "utf8") + "; ({ createAxis, formatTick, formatTicks });"
 );
+
+// Format an axis's ticks the same way drawChart() does.
+function labelsFor(min, max, logarithmic = false) {
+  const axis = createAxis(min, max, logarithmic);
+  return formatTicks(axis.tickRatios.map(axis.tick), logarithmic);
+}
 
 test("rounded labels never overflow to Infinity", () => {
   for (const value of [Number.MAX_VALUE, -Number.MAX_VALUE, 1.797e308, Number.MIN_VALUE, 0]) {
@@ -119,6 +125,43 @@ test("log axes remain finite across the full positive numeric range", () => {
       assert.ok(Number.isFinite(axis.tick(ratio)));
       assert.ok(axis.tick(ratio) > 0);
       assert.ok(Number.isFinite(axis.position(axis.tick(ratio))));
+    }
+  }
+});
+
+test("narrow ranges at large magnitude get distinct labels showing the tick step", () => {
+  // Regression: every tick here used to read 1e+3.
+  const labels = labelsFor(1000, 1001);
+  assert.deepEqual([...labels], ["1000", "1000.25", "1000.5", "1000.75", "1001"]);
+  assert.equal(new Set(labels).size, labels.length);
+  assert.deepEqual([...labelsFor(1.0001, 1.0002)], ["1.0001", "1.000125", "1.00015", "1.000175", "1.0002"]);
+});
+
+test("typical ranges keep their compact labels", () => {
+  assert.deepEqual([...labelsFor(0, 100)], ["0", "25", "50", "75", "100"]);
+  assert.deepEqual([...labelsFor(-10, -2)], ["-10", "-8", "-6", "-4", "-2"]);
+  assert.deepEqual([...labelsFor(0, 10)], ["0", "2.5", "5", "7.5", "10"]);
+  assert.deepEqual([...labelsFor(1, 10000, true)], ["1", "10", "100", "1e+3", "1e+4"]);
+  assert.deepEqual([...labelsFor(5, 5)], ["5"]);
+});
+
+test("tick labels stay short and finite", () => {
+  for (const [min, max] of [[1000, 1001], [1.0001, 1.0002]]) {
+    for (const label of labelsFor(min, max)) assert.ok(label.length <= 10, label);
+  }
+  for (const [min, max, logarithmic] of [
+    [-Number.MAX_VALUE, Number.MAX_VALUE],
+    [0, Number.MIN_VALUE],
+    [-Number.MIN_VALUE, Number.MIN_VALUE],
+    [Number.MIN_VALUE, 2 * Number.MIN_VALUE],
+    [1.7976931348623155e308, Number.MAX_VALUE],
+    [Number.MIN_VALUE, Number.MAX_VALUE, true],
+    [Number.MIN_VALUE, 2 * Number.MIN_VALUE, true]
+  ]) {
+    for (const label of labelsFor(min, max, logarithmic)) {
+      assert.doesNotMatch(label, /Infinity|NaN/);
+      // At most 15 significant digits, plus sign, point, and exponent.
+      assert.ok(label.replace(/^-|e.*$|\./g, "").length <= 15, label);
     }
   }
 });
