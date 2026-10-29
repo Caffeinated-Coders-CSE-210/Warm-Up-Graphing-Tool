@@ -1,0 +1,241 @@
+{
+  "measuredAt": "2026-10-26T22:45:39.990Z",
+  "applicationCommit": "3895343d0673aa7af7930b641a17b9afe649403b",
+  "environment": {
+    "os": "Windows_NT 10.0.26300 x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCPUs": 16,
+    "memoryGiB": 31.9,
+    "node": "v24.22.1",
+    "playwright": "1.62.1",
+    "browser": "156.0.4314.42",
+    "channel": "msedge",
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 960
+    },
+    "deviceScaleFactor": 1,
+    "page": "local file URL",
+    "scales": "X linear, Y linear",
+    "repetitions": 3
+  },
+  "trials": [
+    {
+      "points": 100,
+      "repetition": 1,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 67.9,
+        "statusMs": 4.3,
+        "twoFramesMs": 71.5
+      },
+      "add": {
+        "maxFrameGapMs": 67.2,
+        "statusMs": 3.4,
+        "twoFramesMs": 74
+      },
+      "export": {
+        "maxFrameGapMs": 11.2,
+        "statusMs": 21,
+        "twoFramesMs": 27.2,
+        "downloadAvailableMs": 37.4,
+        "file": "scatter-100-run-1.png",
+        "bytes": 65755
+      },
+      "validatedPointsPerChart": 101
+    },
+    {
+      "points": 100,
+      "repetition": 2,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 8,
+        "statusMs": 4.3,
+        "twoFramesMs": 12.5
+      },
+      "add": {
+        "maxFrameGapMs": 4.6,
+        "statusMs": 3.1,
+        "twoFramesMs": 8
+      },
+      "export": {
+        "maxFrameGapMs": 10.1,
+        "statusMs": 18.3,
+        "twoFramesMs": 26.3,
+        "downloadAvailableMs": 20.4,
+        "file": "scatter-100-run-2.png",
+        "bytes": 65755
+      },
+      "validatedPointsPerChart": 101
+    },
+    {
+      "points": 100,
+      "repetition": 3,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 8.3,
+        "statusMs": 4.2,
+        "twoFramesMs": 12.6
+      },
+      "add": {
+        "maxFrameGapMs": 4.8,
+        "statusMs": 3,
+        "twoFramesMs": 8.2
+      },
+      "export": {
+        "maxFrameGapMs": 9.7,
+        "statusMs": 18.1,
+        "twoFramesMs": 27.5,
+        "downloadAvailableMs": 19.5,
+        "file": "scatter-100-run-3.png",
+        "bytes": 65755
+      },
+      "validatedPointsPerChart": 101
+    },
+    {
+      "points": 1000,
+      "repetition": 1,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 16.4,
+        "statusMs": 16.3,
+        "twoFramesMs": 29.7
+      },
+      "add": {
+        "maxFrameGapMs": 17.6,
+        "statusMs": 17,
+        "twoFramesMs": 20.5
+      },
+      "export": {
+        "maxFrameGapMs": 14,
+        "statusMs": 39.4,
+        "twoFramesMs": 45.6,
+        "downloadAvailableMs": 41.1,
+        "file": "scatter-1000-run-1.png",
+        "bytes": 32225
+      },
+      "validatedPointsPerChart": 1001
+    },
+    {
+      "points": 1000,
+      "repetition": 2,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 16.3,
+        "statusMs": 16.5,
+        "twoFramesMs": 30
+      },
+      "add": {
+        "maxFrameGapMs": 18.6,
+        "statusMs": 17.9,
+        "twoFramesMs": 21.5
+      },
+      "export": {
+        "maxFrameGapMs": 13.8,
+        "statusMs": 41.8,
+        "twoFramesMs": 51.2,
+        "downloadAvailableMs": 43.5,
+        "file": "scatter-1000-run-2.png",
+        "bytes": 32225
+      },
+      "validatedPointsPerChart": 1001
+    },
+    {
+      "points": 1000,
+      "repetition": 3,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 16.8,
+        "statusMs": 16.7,
+        "twoFramesMs": 29.9
+      },
+      "add": {
+        "maxFrameGapMs": 16.9,
+        "statusMs": 16.2,
+        "twoFramesMs": 19.7
+      },
+      "export": {
+        "maxFrameGapMs": 13.9,
+        "statusMs": 42.7,
+        "twoFramesMs": 51.8,
+        "downloadAvailableMs": 44.3,
+        "file": "scatter-1000-run-3.png",
+        "bytes": 32225
+      },
+      "validatedPointsPerChart": 1001
+    },
+    {
+      "points": 10000,
+      "repetition": 1,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 116.3,
+        "statusMs": 116.1,
+        "twoFramesMs": 184.4
+      },
+      "add": {
+        "maxFrameGapMs": 159,
+        "statusMs": 154.9,
+        "twoFramesMs": 185.4
+      },
+      "export": {
+        "maxFrameGapMs": 118.9,
+        "statusMs": 260.1,
+        "twoFramesMs": 270.5,
+        "downloadAvailableMs": 270.2,
+        "file": "scatter-10000-run-1.png",
+        "bytes": 35127
+      },
+      "validatedPointsPerChart": 10001
+    },
+    {
+      "points": 10000,
+      "repetition": 2,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 117.4,
+        "statusMs": 117.3,
+        "twoFramesMs": 185.7
+      },
+      "add": {
+        "maxFrameGapMs": 158.8,
+        "statusMs": 154.2,
+        "twoFramesMs": 183.4
+      },
+      "export": {
+        "maxFrameGapMs": 115.2,
+        "statusMs": 255.4,
+        "twoFramesMs": 269.8,
+        "downloadAvailableMs": 257,
+        "file": "scatter-10000-run-2.png",
+        "bytes": 35127
+      },
+      "validatedPointsPerChart": 10001
+    },
+    {
+      "points": 10000,
+      "repetition": 3,
+      "pageErrors": [],
+      "import": {
+        "maxFrameGapMs": 115,
+        "statusMs": 114.8,
+        "twoFramesMs": 182.6
+      },
+      "add": {
+        "maxFrameGapMs": 197.6,
+        "statusMs": 193.2,
+        "twoFramesMs": 220.7
+      },
+      "export": {
+        "maxFrameGapMs": 109.8,
+        "statusMs": 254.7,
+        "twoFramesMs": 268.6,
+        "downloadAvailableMs": 256.9,
+        "file": "scatter-10000-run-3.png",
+        "bytes": 35127
+      },
+      "validatedPointsPerChart": 10001
+    }
+  ]
+}
