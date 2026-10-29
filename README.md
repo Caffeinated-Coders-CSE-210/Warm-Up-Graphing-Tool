@@ -82,6 +82,18 @@ when commits are pushed to `main`. Open a pull request's **Checks** tab, or the
 repository's **Actions** tab and its **Node tests** workflow, to see results and
 failure details. Tests must pass before merging.
 
+## Playwright e2e testing
+
+First-time setup, from the repository root with Node.js 24 installed:
+
+```bash
+npm install
+npx playwright install chromium
+```
+
+To run the tests via commandline: `npm run test:browser`
+To run the tests via Playwright UI: `npx playwright test --ui` 
+
 ## Documentation
 
 - [Contributing Guidelines](docs/CONTRIBUTING.md) — contribution workflow, issue and branch conventions, commit messages, testing, pull requests, code review, and merging.
