@@ -7,14 +7,19 @@ const xInput = document.querySelector("#x-input");
 const yInput = document.querySelector("#y-input");
 const status = document.querySelector("#status");
 const tooltip = document.querySelector("#point-tooltip");
-const deleteDialog = document.querySelector("#delete-dialog");
-const deleteMessage = document.querySelector("#delete-message");
+const pointDialog = document.querySelector("#point-dialog");
+const pointDialogForm = document.querySelector("#point-dialog-form");
+const pointMessage = document.querySelector("#point-message");
+const editX = document.querySelector("#edit-x");
+const editY = document.querySelector("#edit-y");
+const pointError = document.querySelector("#point-error");
 const logButtons = { x: document.querySelector("#log-x"), y: document.querySelector("#log-y") };
 const logScale = { x: false, y: false };
 const scaleHelp = document.querySelector("#scale-help");
 const exportStatus = document.querySelector("#export-status");
 const exportButtons = document.querySelectorAll(".export-button");
-let pointToDelete = null;
+let selectedPoint = null;
+let pendingValues = null;
 
 function showStatus(message, isError = false) {
   status.textContent = message;
@@ -60,7 +65,7 @@ function hideTooltip() {
 }
 
 function showTooltip(circle, point) {
-  if (deleteDialog.open) return;
+  if (pointDialog.open) return;
   tooltip.textContent = `X: ${point.x}\nY: ${point.y}`;
   tooltip.hidden = false;
   const anchor = circle.getBoundingClientRect();
@@ -76,18 +81,47 @@ function showTooltip(circle, point) {
 window.addEventListener("scroll", hideTooltip, true);
 window.addEventListener("resize", hideTooltip);
 
-function requestDelete(point) {
-  pointToDelete = point;
-  deleteMessage.textContent = `Remove X: ${point.x}, Y: ${point.y} from both charts?`;
-  deleteDialog.returnValue = ""; // Escape must never reuse an earlier confirmation.
+function openPointDialog(point) {
+  selectedPoint = point;
+  pendingValues = null;
+  pointMessage.textContent = `Current values: X: ${point.x}, Y: ${point.y}. Changes apply to both charts.`;
+  editX.value = point.x;
+  editY.value = point.y;
+  pointError.textContent = "";
+  pointDialog.returnValue = ""; // Escape must never reuse an earlier save or deletion.
   hideTooltip();
-  deleteDialog.showModal();
+  pointDialog.showModal();
 }
 
-deleteDialog.addEventListener("close", () => {
-  if (deleteDialog.returnValue === "confirm") {
+// Enter in a field would otherwise submit with the first button, Delete.
+for (const input of [editX, editY]) {
+  input.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    pointDialogForm.requestSubmit(pointDialogForm.querySelector('button[value="save"]'));
+  });
+}
+
+pointDialogForm.addEventListener("submit", (event) => {
+  if (event.submitter?.value !== "save") return;
+  try {
+    pendingValues = parsePointInput(editX.valueAsNumber, editY.valueAsNumber);
+  } catch (error) {
+    event.preventDefault(); // Keep the dialog open so the user can fix the input.
+    pointError.textContent = error.message;
+    (Number.isFinite(editX.valueAsNumber) ? editY : editX).focus();
+  }
+});
+
+pointDialog.addEventListener("close", () => {
+  if (pointDialog.returnValue === "save" && pendingValues) {
+    if (editPoint(points, selectedPoint, pendingValues)) {
+      render();
+      showStatus(`Updated point to (${selectedPoint.x}, ${selectedPoint.y}).`);
+    }
+  } else if (pointDialog.returnValue === "delete") {
     // Match the object itself so identical coordinates remain separate points.
-    const index = points.indexOf(pointToDelete);
+    const index = points.indexOf(selectedPoint);
     if (index !== -1) {
       points.splice(index, 1);
       render();
@@ -95,7 +129,8 @@ deleteDialog.addEventListener("close", () => {
       xInput.focus();
     }
   }
-  pointToDelete = null;
+  selectedPoint = null;
+  pendingValues = null;
   hideTooltip();
 });
 
@@ -190,17 +225,17 @@ function drawChart(svg, connectPoints) {
     const label = `X: ${point.x}, Y: ${point.y}`;
     const circle = svgElement("circle", {
       cx: scaleX(point.x), cy: scaleY(point.y), r: 6, class: "point",
-      tabindex: 0, role: "button", "aria-label": `${label}; press Enter to review deletion`
+      tabindex: 0, role: "button", "aria-label": `${label}; press Enter to edit or delete`
     });
     circle.addEventListener("pointerenter", () => showTooltip(circle, point));
     circle.addEventListener("pointerleave", hideTooltip);
     circle.addEventListener("focus", () => showTooltip(circle, point));
     circle.addEventListener("blur", hideTooltip);
-    circle.addEventListener("click", () => requestDelete(point));
+    circle.addEventListener("click", () => openPointDialog(point));
     circle.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        requestDelete(point);
+        openPointDialog(point);
       }
     });
     svg.append(circle);

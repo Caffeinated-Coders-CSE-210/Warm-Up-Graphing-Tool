@@ -17,7 +17,7 @@ Microsoft Edge on Windows, including opening the page through a local `file:` UR
 ## Use
 
 - Import a CSV with the header `x,y` and two finite numbers per row, or add points manually.
-- Hover or focus a point to see its original values. Click it to review deletion; Cancel or Escape keeps the point.
+- Hover or focus a point to see its original values. Click it, or press Enter on it, to open a dialog with its current X and Y. Change the values and click **Save** (or press Enter) to update both charts, or click **Delete** to remove the point. Invalid values show an error in the dialog and leave the point unchanged; Cancel or Escape keeps the point as it was.
 - Switch X and Y independently between linear and base-10 logarithmic scales. Log scale spreads out values across orders of magnitude.
 - An axis containing zero or negative values stays linear; the page explains why its log button is disabled. Adding or importing such values resets that axis to linear without removing any points. The other axis keeps its selected scale.
 - Choose PNG, JPEG, or SVG below either chart and click **Export image**. The download includes the chart title, current scales, labels, and points on a white background. PNG and JPEG are 960 by 664 pixels; SVG remains scalable.
@@ -32,7 +32,8 @@ flowchart TD
   CSV[CSV import] --> Parser["csv.js: parseCSV"]
   Parser -->|return validated points| P[points]
   Add[Manual addition] -->|append a valid point| P
-  Delete[Confirmed deletion] -->|remove the selected point| P
+  Edit[Saved edit] -->|parsePointInput validates, editPoint updates the selected point| P
+  Delete[Deletion from the point dialog] -->|remove the selected point| P
   P --> R[render]
   Settings[X and Y scale settings] --> R
   R -->|sort points by X and draw both charts| D[drawChart]
@@ -46,15 +47,17 @@ flowchart TD
 
 Start in `app.js` for input handlers, the shared `points` array, `render()`,
 `drawChart()`, and export. CSV parsing and validation are handled separately in `csv.js`, while `scale.js` provides axis calculations and tick labels.
+`points.js` validates and applies point edits.
 `render()` also resets unsupported log scales and updates the controls before
-drawing. An invalid CSV leaves the current data unchanged; canceling deletion
-does not change `points`.
+drawing. An invalid CSV leaves the current data unchanged; canceling the point
+dialog, or saving invalid values, does not change `points`.
 
-`tests/scale.test.cjs` checks numerical helpers without opening a browser.
+`tests/scale.test.cjs` checks numerical helpers and `tests/points.test.cjs` checks
+point-edit validation, both without opening a browser.
 The shared test command also discovers other `tests/*.test.cjs` files as they
 are added. It does not verify file input, chart interactions, or downloads.
 Check those separately in the browser: import `sample.csv`, add a point,
-cancel and confirm deletion, toggle a scale, and export an image.
+edit a point (including invalid input and Cancel), delete a point, toggle a scale, and export an image.
 
 ## Folders & Files
 
@@ -64,6 +67,7 @@ cancel and confirm deletion, toggle a scale, and export an image.
 - `index.html`: page controls and chart containers.
 - `style.css`: layout and chart appearance.
 - `scale.js`: numeric scaling and tick formatting.
+- `points.js`: point-edit validation and in-place updates.
 - `csv.js`: CSV parsing and validation.
 - `app.js`: CSV input, chart interactions, and image export.
 - `sample.csv`: example dataset.
